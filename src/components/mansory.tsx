@@ -29,7 +29,7 @@ const columnsBp = {
 
 const MasonryImages = () => {
     // const items = useMemo(() => getItems(data), [data])
-    const [_, setWindowWidth] = useState(window.innerWidth)
+    const [_, setWindowWidth] = useState(0)
 
     // Без этого useEffect, при изменении ширины окна, колонки не будут пересчитываться
     useEffect(() => {

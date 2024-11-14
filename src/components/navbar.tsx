@@ -10,10 +10,10 @@ const Navbar = () => {
     return (
         <nav className="flex items-center gap-8">
             <Link href={"/"} className="flex items-center gap-2 ">
-                <EyeIcon className="w-12 h-full text-primary" />
+                <EyeIcon className="h-full w-12 text-primary" />
                 <h1 className="text-3xl font-bold text-primary">VisualNest</h1>
             </Link>
-            <div className="w-full relative">
+            <div className="relative w-full">
                 <Input
                     id="input-26"
                     className="peer pe-9 ps-10"
@@ -26,13 +26,13 @@ const Navbar = () => {
             </div>
             <Button className="group">
                 <PlusIcon
-                    className="w-12 h-12 p-0 transition group-hover:scale-125"
+                    className="size-12 p-0 transition group-hover:scale-125"
                     size={24}
                     strokeWidth={2}
                 />
                 Новая доска
             </Button>
-            <Avatar className="w-12 h-12">
+            <Avatar className="size-12">
                 <AvatarImage
                     src="https://github.com/shadcn.png"
                     alt="@shadcn"
