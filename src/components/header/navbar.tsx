@@ -1,14 +1,21 @@
-import { EyeIcon, PlusIcon } from "lucide-react"
+import { EyeIcon, PlusIcon, UserIcon } from "lucide-react"
 import { Search } from "lucide-react"
 import Link from "next/link"
+import { Suspense } from "react"
 
+import { auth } from "../../../auth"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
+import { Skeleton } from "../ui/skeleton"
 
 import { UserPopup } from "./user-popup"
 
-const Navbar = () => {
+const Navbar = async () => {
+    const session = await auth()
+    const user = session?.user
+    console.log(user)
+
     return (
         <nav className="flex items-center gap-8">
             <Link href={"/"} className="flex items-center gap-2 ">
@@ -34,22 +41,35 @@ const Navbar = () => {
                 />
                 Новая доска
             </Button>
-            <UserPopup
-                user={{
-                    name: "John Doe",
-                    email: "sdf@mail.ru",
-                    avatarUrl: "https://randomuser.me/api/port",
-                }}
-                trigger={
+            <Suspense
+                fallback={<Skeleton className="size-[48px] rounded-full" />}
+            >
+                {user ? (
+                    <UserPopup
+                        user={{
+                            name: user?.name || undefined,
+                            email: user?.email || undefined,
+                            avatarUrl: "",
+                        }}
+                        trigger={
+                            <Avatar className="size-12 cursor-pointer">
+                                <AvatarImage src="" alt="@shadcn" />
+                                <AvatarFallback>
+                                    {user?.name?.toUpperCase().slice(0, 1)}
+                                </AvatarFallback>
+                            </Avatar>
+                        }
+                    />
+                ) : (
                     <Avatar className="size-12 cursor-pointer">
-                        <AvatarImage
-                            src="https://github.com/shadcn.png"
-                            alt="@shadcn"
-                        />
-                        <AvatarFallback>CN</AvatarFallback>
+                        <AvatarFallback>
+                            <Link href="/auth/login">
+                                <UserIcon />
+                            </Link>
+                        </AvatarFallback>
                     </Avatar>
-                }
-            />
+                )}
+            </Suspense>
         </nav>
     )
 }
