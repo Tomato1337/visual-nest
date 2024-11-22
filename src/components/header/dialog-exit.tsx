@@ -1,3 +1,5 @@
+"use client"
+
 import { FC, ReactNode } from "react"
 
 import {
@@ -14,9 +16,10 @@ import {
 
 interface DialogExitProps {
     children: ReactNode
+    handleSubmit: () => void
 }
 
-const DialogExit: FC<DialogExitProps> = ({ children }) => {
+const DialogExit: FC<DialogExitProps> = ({ children, handleSubmit }) => {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
@@ -31,7 +34,9 @@ const DialogExit: FC<DialogExitProps> = ({ children }) => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Отменить</AlertDialogCancel>
-                    <AlertDialogAction type="submit">Выйти</AlertDialogAction>
+                    <AlertDialogAction onClick={handleSubmit}>
+                        Выйти
+                    </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

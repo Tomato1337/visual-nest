@@ -56,13 +56,14 @@ export const UserPopup = ({ user, trigger }: UserPopupProps) => {
                             Настройки
                         </Link>
                     </Button>
-                    <form
-                        action={async () => {
-                            "use server"
-                            await signOut()
-                        }}
-                    >
-                        <DialogExit>
+                    <form>
+                        <DialogExit
+                            handleSubmit={async () => {
+                                "use server"
+                                console.log("зашли")
+                                await signOut()
+                            }}
+                        >
                             <Button
                                 variant="ghost"
                                 className="w-full justify-start"

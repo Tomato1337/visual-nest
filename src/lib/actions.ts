@@ -1,6 +1,7 @@
 "use server"
 
 import bcrypt from "bcrypt"
+import { isRedirectError } from "next/dist/client/components/redirect"
 import { redirect } from "next/navigation"
 import { AuthError } from "next-auth"
 import { z } from "zod"
@@ -74,12 +75,14 @@ export const registerAction = async (
 
         //!! Редирект не работает на локальном сервере  Error: connect EACCES ::1:3000
         redirect("/auth/login")
-
         // return {
         //     message: "Регистрация прошла успешно.",
         // }
     } catch (error) {
         console.error(error)
+        if (isRedirectError(error)) {
+            throw error
+        }
         return {
             message: `Ошибка при регистрации: ${(error as Error).message}`,
         }
@@ -104,12 +107,16 @@ export const loginAction = async (
     try {
         await signIn("credentials", formData)
         //!! Редирект не работает на локальном сервере  Error: connect EACCES ::1:3000
-        redirect("/")
+        redirect("")
 
         // return {
         //     message: "Авторизация прошла успешно.",
         // }
     } catch (error) {
+        if (isRedirectError(error)) {
+            throw error
+        }
+
         if (error instanceof AuthError) {
             switch (error.type) {
                 case "CredentialsSignin":
