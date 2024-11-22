@@ -75,9 +75,6 @@ export const registerAction = async (
 
         //!! Редирект не работает на локальном сервере  Error: connect EACCES ::1:3000
         redirect("/auth/login")
-        // return {
-        //     message: "Регистрация прошла успешно.",
-        // }
     } catch (error) {
         console.error(error)
         if (isRedirectError(error)) {
@@ -105,13 +102,13 @@ export const loginAction = async (
     }
 
     try {
-        await signIn("credentials", formData)
+        await signIn("credentials", {
+            email: validatedFields.data.email,
+            password: validatedFields.data.password,
+            redirect: false,
+        })
         //!! Редирект не работает на локальном сервере  Error: connect EACCES ::1:3000
-        redirect("")
-
-        // return {
-        //     message: "Авторизация прошла успешно.",
-        // }
+        redirect("/")
     } catch (error) {
         if (isRedirectError(error)) {
             throw error
