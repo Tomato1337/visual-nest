@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { FormEvent, useActionState, useEffect, useState } from "react"
+import { useActionState, useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,15 +15,21 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FormRegisterType, registerAction } from "@/lib/actions"
+import { cn } from "@/lib/utils"
 
 const RegisterPage = () => {
-    const initialState: FormRegisterType = {
+    const [valuesState, setValuesState] = useState<FormRegisterType>({
+        state: {
+            email: "",
+            password: "",
+            name: "",
+        },
         errors: {},
         message: null,
-    }
+    })
     const [formState, formAction, isPending] = useActionState(
         registerAction,
-        initialState,
+        valuesState,
     )
     const [visibleInfoMessage, setVisibleInfoMessage] = useState(false)
 
@@ -38,12 +44,6 @@ const RegisterPage = () => {
         }
     }, [formState])
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        const formData = new FormData(e.currentTarget)
-        await formAction(formData)
-    }
-
     return (
         <div className="flex h-screen w-full items-center justify-center">
             <Card className="w-[350px]">
@@ -53,7 +53,7 @@ const RegisterPage = () => {
                         Введите свои учетные данные для создания новой учетной.
                     </CardDescription>
                 </CardHeader>
-                <form onSubmit={handleSubmit}>
+                <form action={formAction}>
                     <CardContent>
                         <div className="grid w-full items-center gap-4">
                             <div className="flex flex-col space-y-1.5">
@@ -62,6 +62,16 @@ const RegisterPage = () => {
                                     id="name"
                                     name="name"
                                     type="text"
+                                    value={valuesState?.state?.name}
+                                    onChange={(e) =>
+                                        setValuesState({
+                                            ...valuesState,
+                                            state: {
+                                                ...valuesState.state,
+                                                name: e.target.value,
+                                            },
+                                        })
+                                    }
                                     required
                                 />
                                 {formState?.errors?.name && (
@@ -76,6 +86,16 @@ const RegisterPage = () => {
                                     id="email"
                                     name="email"
                                     type="email"
+                                    value={valuesState?.state?.email}
+                                    onChange={(e) =>
+                                        setValuesState({
+                                            ...valuesState,
+                                            state: {
+                                                ...valuesState.state,
+                                                email: e.target.value,
+                                            },
+                                        })
+                                    }
                                     required
                                 />
                                 {formState?.errors?.email && (
@@ -90,6 +110,16 @@ const RegisterPage = () => {
                                     id="password"
                                     name="password"
                                     type="password"
+                                    value={valuesState?.state?.password}
+                                    onChange={(e) =>
+                                        setValuesState({
+                                            ...valuesState,
+                                            state: {
+                                                ...valuesState.state,
+                                                password: e.target.value,
+                                            },
+                                        })
+                                    }
                                     required
                                 />
                                 {formState?.errors?.password && (
@@ -100,7 +130,7 @@ const RegisterPage = () => {
                             </div>
                         </div>
                     </CardContent>
-                    <CardFooter className="flex flex-col">
+                    <CardFooter className="flex flex-col space-y-4">
                         <Button
                             className="w-full"
                             type="submit"
@@ -111,11 +141,16 @@ const RegisterPage = () => {
                                 : "Зарегистрироваться"}
                         </Button>
                         {visibleInfoMessage && formState?.message && (
-                            <p className="mt-2 text-sm text-primary">
+                            <p
+                                className={cn("text-sm text-primary", {
+                                    "text-red-500":
+                                        formState.typeMessage === "error",
+                                })}
+                            >
                                 {formState.message}
                             </p>
                         )}
-                        <p className="mt-3 text-center text-sm">
+                        <p className="text-center text-sm">
                             У вас уже есть аккаунт?{" "}
                             <Link
                                 href="/auth/login"

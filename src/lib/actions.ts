@@ -11,10 +11,14 @@ import { signIn } from "../../auth"
 import prisma from "./prisma"
 
 export type State<T> = {
+    state?: {
+        [K in keyof T]?: T[K]
+    }
     errors?: {
         [K in keyof T]?: T[K][]
     }
     message?: string | null
+    typeMessage?: "error" | "success"
 }
 
 const formAuthSchema = z.object({
@@ -44,6 +48,7 @@ export const registerAction = async (
         return {
             errors: validatedFields.error.flatten().fieldErrors,
             message: "Исправьте ошибки в форме.",
+            typeMessage: "error",
         }
     }
 
@@ -60,6 +65,7 @@ export const registerAction = async (
                     email: ["Пользователь с таким email уже существует"],
                 },
                 message: "Регистрация не удалась.",
+                typeMessage: "error",
             }
         }
 
@@ -73,7 +79,6 @@ export const registerAction = async (
             },
         })
 
-        //!! Редирект не работает на локальном сервере  Error: connect EACCES ::1:3000
         redirect("/auth/login")
     } catch (error) {
         console.error(error)
@@ -82,6 +87,7 @@ export const registerAction = async (
         }
         return {
             message: `Ошибка при регистрации: ${(error as Error).message}`,
+            typeMessage: "error",
         }
     }
 }
@@ -98,6 +104,7 @@ export const loginAction = async (
         return {
             errors: validatedFields.error.flatten().fieldErrors,
             message: "Исправьте ошибки в форме.",
+            typeMessage: "error",
         }
     }
 
@@ -107,7 +114,6 @@ export const loginAction = async (
             password: validatedFields.data.password,
             redirect: false,
         })
-        //!! Редирект не работает на локальном сервере  Error: connect EACCES ::1:3000
         redirect("/")
     } catch (error) {
         if (isRedirectError(error)) {
@@ -120,10 +126,12 @@ export const loginAction = async (
                     console.log(error)
                     return {
                         message: "Неверный логин или пароль.",
+                        typeMessage: "error",
                     }
                 default:
                     return {
                         message: "Ошибка авторизации.",
+                        typeMessage: "error",
                     }
             }
         }
