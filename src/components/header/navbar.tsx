@@ -3,7 +3,7 @@ import { Search } from "lucide-react"
 import Link from "next/link"
 import { Suspense } from "react"
 
-import { auth } from "../../../auth"
+import { auth, signOut } from "../../../auth"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
@@ -16,9 +16,17 @@ const Navbar = async () => {
     const user = session?.user
     console.log(user)
 
+    const handleSignOut = async () => {
+        "use server"
+        await signOut()
+    }
+
     return (
         <nav className="flex items-center gap-8">
-            <Link href={"/"} className="flex items-center gap-2 ">
+            <Link
+                href={"/"}
+                className="flex items-center gap-2 transition-all duration-300 hover:scale-105"
+            >
                 <EyeIcon className="h-full w-12 text-primary" />
                 <h1 className="text-3xl font-bold text-primary">VisualNest</h1>
             </Link>
@@ -51,6 +59,7 @@ const Navbar = async () => {
                             email: user?.email || undefined,
                             avatarUrl: "",
                         }}
+                        handleSignOut={handleSignOut}
                         trigger={
                             <Avatar className="size-12 cursor-pointer">
                                 <AvatarImage src="" alt="@shadcn" />

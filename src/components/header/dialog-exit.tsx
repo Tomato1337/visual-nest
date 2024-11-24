@@ -16,10 +16,10 @@ import {
 
 interface DialogExitProps {
     children: ReactNode
-    handleSubmit: () => void
+    // handleSubmit: () => void
 }
 
-const DialogExit: FC<DialogExitProps> = ({ children, handleSubmit }) => {
+const DialogExit: FC<DialogExitProps> = ({ children }) => {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
@@ -34,7 +34,7 @@ const DialogExit: FC<DialogExitProps> = ({ children, handleSubmit }) => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Отменить</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleSubmit}>
+                    <AlertDialogAction type="submit" form="signout-form">
                         Выйти
                     </AlertDialogAction>
                 </AlertDialogFooter>

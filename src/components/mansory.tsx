@@ -238,7 +238,7 @@ const MasonryImages = () => {
                           className="absolute p-2 [will-change:transform,width,height,opacity]"
                       >
                           <div
-                              className="relative size-full cursor-pointer overflow-hidden rounded-2xl bg-cover bg-center text-[10px] uppercase leading-[10px] shadow-[0px_10px_50px_-10px_rgba(0,0,0,0.2)] transition-all duration-300 hover:shadow-[0px_20px_50px_-10px_rgba(0,0,0,0.35)]"
+                              className="hover: relative size-full cursor-pointer overflow-hidden rounded-2xl bg-cover bg-center text-[10px] uppercase leading-[10px] shadow-[0px_10px_50px_-10px_rgba(0,0,0,0.2)] transition-all duration-300 hover:scale-[101%] hover:shadow-[0px_20px_50px_-10px_hsl(var(--primary)/0.35)]"
                               style={{
                                   backgroundImage: `url(${item.css}?auto=compress&dpr=2&h=1000&w=1000)`,
                               }}
