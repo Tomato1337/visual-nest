@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useActionState, useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -14,10 +15,13 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { FormLoginType, loginAction } from "@/lib/actions"
+import { loginAction } from "@/lib/actions/auth-actions"
+import { FormLoginType } from "@/lib/actions/schemas"
 import { cn } from "@/lib/utils"
 
 const LoginPage = () => {
+    const router = useRouter()
+
     const [valuesState, setValuesState] = useState<FormLoginType>({
         state: {
             email: "",
@@ -25,12 +29,19 @@ const LoginPage = () => {
         },
         errors: {},
         message: null,
+        typeMessage: undefined,
     })
     const [formState, formAction, isPending] = useActionState(
         loginAction,
         valuesState,
     )
     const [visibleInfoMessage, setVisibleInfoMessage] = useState(false)
+
+    useEffect(() => {
+        if (formState?.typeMessage === "success") {
+            router.push(formState.redirectTo || "/")
+        }
+    }, [formState, router])
 
     useEffect(() => {
         if (formState?.message) {

@@ -1,37 +1,18 @@
 "use server"
 
 import bcrypt from "bcrypt"
-import { isRedirectError } from "next/dist/client/components/redirect"
-import { redirect } from "next/navigation"
 import { AuthError } from "next-auth"
-import { z } from "zod"
+import { UTApi } from "uploadthing/server"
 
-import { signIn } from "../../auth"
+import { signIn } from "../../../auth"
+import prisma from "../prisma"
 
-import prisma from "./prisma"
-
-export type State<T> = {
-    state?: {
-        [K in keyof T]?: T[K]
-    }
-    errors?: {
-        [K in keyof T]?: T[K][]
-    }
-    message?: string | null
-    typeMessage?: "error" | "success"
-}
-
-const formAuthSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(6),
-    name: z.string().min(2),
-})
-
-const formLoginSchema = formAuthSchema.omit({ name: true })
-const formRegisterSchema = formAuthSchema
-
-export type FormRegisterType = State<z.infer<typeof formRegisterSchema>>
-export type FormLoginType = State<z.infer<typeof formLoginSchema>>
+import {
+    FormRegisterType,
+    FormLoginType,
+    formLoginSchema,
+    formRegisterSchema,
+} from "./schemas"
 
 export const registerAction = async (
     prefState: FormRegisterType | undefined,
@@ -53,6 +34,7 @@ export const registerAction = async (
     }
 
     const { email, password, name } = validatedFields.data
+    const image = formData.get("image") as File | null
 
     try {
         const existingUser = await prisma.user.findUnique({
@@ -70,21 +52,31 @@ export const registerAction = async (
         }
 
         const hashedPassword = await bcrypt.hash(password, 10)
+        let imageUrl = ""
+        if (image) {
+            try {
+                const imageResponse = await new UTApi().uploadFiles(image)
+                imageUrl = imageResponse.data?.url || ""
+            } catch (error) {
+                console.error("Error uploading image:", error)
+            }
+        }
 
         await prisma.user.create({
             data: {
                 email,
                 password: hashedPassword,
                 name,
+                image: imageUrl,
             },
         })
-
-        redirect("/auth/login")
+        return {
+            message: "Регистрация прошла успешно.",
+            typeMessage: "success",
+            redirectTo: "/auth/login",
+        }
     } catch (error) {
         console.error(error)
-        if (isRedirectError(error)) {
-            throw error
-        }
         return {
             message: `Ошибка при регистрации: ${(error as Error).message}`,
             typeMessage: "error",
@@ -114,12 +106,12 @@ export const loginAction = async (
             password: validatedFields.data.password,
             redirect: false,
         })
-        redirect("/")
-    } catch (error) {
-        if (isRedirectError(error)) {
-            throw error
+        return {
+            message: "Авторизации прошла успешно.",
+            typeMessage: "success",
+            redirectTo: "/",
         }
-
+    } catch (error) {
         if (error instanceof AuthError) {
             switch (error.type) {
                 case "CredentialsSignin":

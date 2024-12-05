@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Suspense } from "react"
 
 import { auth, signOut } from "../../../auth"
+import { CreateBoard } from "../create-board"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
@@ -41,14 +42,16 @@ const Navbar = async () => {
                     <Search size={24} strokeWidth={2} />
                 </div>
             </div>
-            <Button className="group">
-                <PlusIcon
-                    className="size-12 p-0 transition group-hover:scale-125"
-                    size={24}
-                    strokeWidth={2}
-                />
-                Новая доска
-            </Button>
+            <CreateBoard>
+                <Button className="group">
+                    <PlusIcon
+                        className="size-12 p-0 transition group-hover:scale-125"
+                        size={24}
+                        strokeWidth={2}
+                    />
+                    Новая доска
+                </Button>
+            </CreateBoard>
             <Suspense
                 fallback={<Skeleton className="size-[48px] rounded-full" />}
             >
@@ -57,12 +60,16 @@ const Navbar = async () => {
                         user={{
                             name: user?.name || undefined,
                             email: user?.email || undefined,
-                            avatarUrl: "",
+                            avatarUrl: user?.image || undefined,
                         }}
                         handleSignOut={handleSignOut}
                         trigger={
-                            <Avatar className="size-12 cursor-pointer">
-                                <AvatarImage src="" alt="@shadcn" />
+                            <Avatar className="size-12 cursor-pointer border">
+                                <AvatarImage
+                                    src={user?.image || ""}
+                                    alt="@shadcn"
+                                    className="object-cover"
+                                />
                                 <AvatarFallback>
                                     {user?.name?.toUpperCase().slice(0, 1)}
                                 </AvatarFallback>
@@ -70,13 +77,13 @@ const Navbar = async () => {
                         }
                     />
                 ) : (
-                    <Avatar className="size-12 cursor-pointer">
-                        <AvatarFallback>
-                            <Link href="/auth/login">
+                    <Link href="/auth/login">
+                        <Avatar className="size-12 cursor-pointer">
+                            <AvatarFallback>
                                 <UserIcon />
-                            </Link>
-                        </AvatarFallback>
-                    </Avatar>
+                            </AvatarFallback>
+                        </Avatar>
+                    </Link>
                 )}
             </Suspense>
         </nav>

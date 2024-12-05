@@ -41,10 +41,11 @@ export const UserPopup = ({ user, trigger, handleSignOut }: UserPopupProps) => {
                     className="z-50 rounded-3xl bg-primary-foreground p-4 shadow-2xl"
                 >
                     <div className="mb-4 flex items-center space-x-4">
-                        <Avatar>
+                        <Avatar className="border">
                             <AvatarImage
                                 src={user?.avatarUrl}
                                 alt={user?.name}
+                                className="object-cover"
                             />
                             <AvatarFallback>
                                 {user?.name?.charAt(0)}

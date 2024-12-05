@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useActionState, useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -12,17 +13,26 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import DragAndDrop, { ImageData } from "@/components/ui/drag-and-drop"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { FormRegisterType, registerAction } from "@/lib/actions"
+import { registerAction } from "@/lib/actions/auth-actions"
+import { FormRegisterType } from "@/lib/actions/schemas"
 import { cn } from "@/lib/utils"
 
 const RegisterPage = () => {
+    const router = useRouter()
+
+    const [imageState, setImageState] = useState<ImageData>({
+        file: null,
+        image: null,
+    })
     const [valuesState, setValuesState] = useState<FormRegisterType>({
         state: {
             email: "",
             password: "",
             name: "",
+            image: undefined,
         },
         errors: {},
         message: null,
@@ -43,6 +53,12 @@ const RegisterPage = () => {
             return () => clearTimeout(timer)
         }
     }, [formState])
+
+    useEffect(() => {
+        if (formState?.typeMessage === "success") {
+            router.push(formState.redirectTo || "/auth/login")
+        }
+    }, [formState, router])
 
     return (
         <div className="flex h-screen w-full items-center justify-center">
@@ -101,6 +117,18 @@ const RegisterPage = () => {
                                 {formState?.errors?.email && (
                                     <p className="text-sm text-red-500">
                                         {formState?.errors.email.join(", ")}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="flex flex-col space-y-1.5">
+                                <Label htmlFor="email">Аватар</Label>
+                                <DragAndDrop
+                                    imageData={imageState}
+                                    setImageData={setImageState}
+                                />
+                                {formState?.errors?.image && (
+                                    <p className="text-sm text-red-500">
+                                        {formState?.errors.image.join(", ")}
                                     </p>
                                 )}
                             </div>

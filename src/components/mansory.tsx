@@ -1,86 +1,17 @@
 "use client"
 
+import { Board } from "@prisma/client"
 import { useTransition, a } from "@react-spring/web"
 import { useMeasure } from "@uidotdev/usehooks"
-import { useEffect, useMemo, useState } from "react"
+import NextImage from "next/image"
+import { FC, useEffect, useMemo, useState } from "react"
 
 import useMedia from "@/hooks/useMedia"
+import { useViewportHeight } from "@/hooks/useViewportHeight"
 
 import { Skeleton } from "./ui/skeleton"
 
-const data = [
-    {
-        css: "https://images.pexels.com/photos/416430/pexels-photo-416430.jpeg",
-        height: 1200,
-    },
-    {
-        css: "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg",
-        height: 300,
-    },
-    {
-        css: "https://images.pexels.com/photos/911738/pexels-photo-911738.jpeg",
-        height: 300,
-    },
-    {
-        css: "https://images.pexels.com/photos/358574/pexels-photo-358574.jpeg",
-        height: 300,
-    },
-    {
-        css: "https://images.pexels.com/photos/1738986/pexels-photo-1738986.jpeg",
-        height: 300,
-    },
-    {
-        css: "https://images.pexels.com/photos/96381/pexels-photo-96381.jpeg",
-        height: 300,
-    },
-    {
-        css: "https://images.pexels.com/photos/1005644/pexels-photo-1005644.jpeg",
-        height: 200,
-    },
-    {
-        css: "https://images.pexels.com/photos/227675/pexels-photo-227675.jpeg",
-        height: 300,
-    },
-    {
-        css: "https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg",
-        height: 200,
-    },
-    {
-        css: "https://images.pexels.com/photos/327482/pexels-photo-327482.jpeg",
-        height: 400,
-    },
-    {
-        css: "https://images.pexels.com/photos/2736834/pexels-photo-2736834.jpeg",
-        height: 200,
-    },
-    {
-        css: "https://images.pexels.com/photos/249074/pexels-photo-249074.jpeg",
-        height: 150,
-    },
-    {
-        css: "https://images.pexels.com/photos/310452/pexels-photo-310452.jpeg",
-        height: 400,
-    },
-    {
-        css: "https://images.pexels.com/photos/380337/pexels-photo-380337.jpeg",
-        height: 200,
-    },
-]
-
-// const orientationArr = [
-//     {
-//         width: 350,
-//         height: 200,
-//     },
-//     {
-//         width: 580,
-//         height: 300,
-//     },
-//     {
-//         width: 750,
-//         height: 400,
-//     },
-// ]
+const orientationArr = [350, 400, 580, 750]
 
 const skeletonData = [
     { height: 500 },
@@ -102,28 +33,49 @@ const skeletonData = [
     width: 0,
 }))
 
-interface MasonryItem {
+export interface MasonryItem {
+    item: Board
     css: string
-    height: number
+    height?: number
     width?: number
     x?: number
     y?: number
 }
 
-const MasonryImages = () => {
+interface MasonryImagesProps {
+    data: MasonryItem[]
+    page: number
+    isLoadingDOMImages: boolean
+    setIsLoadingDOMImages: (value: boolean) => void
+    error: any
+    isFetching: boolean
+}
+
+const MasonryImages: FC<MasonryImagesProps> = ({
+    data,
+    isFetching,
+    error,
+    setIsLoadingDOMImages,
+    page,
+}) => {
     const columns = useMedia(
-        ["(min-width: 1500px)", "(min-width: 1000px)", "(min-width: 600px)"],
-        [5, 4, 3],
-        2,
+        [
+            "(min-width: 1500px)",
+            "(min-width: 1000px)",
+            "(min-width: 600px)",
+            "(min-width: 400px)",
+        ],
+        [5, 4, 3, 2],
+        1,
     )
+    const heightViewport = useViewportHeight()
     const [ref, { width }] = useMeasure()
 
     const [items, setItems] = useState<MasonryItem[]>(data)
 
-    const [isLoading, setIsLoading] = useState(true)
-
     useEffect(() => {
         let isMounted = true
+        setIsLoadingDOMImages(true)
         Promise.all<MasonryItem>(
             data.map((item) => {
                 return new Promise<MasonryItem>((resolve) => {
@@ -132,48 +84,63 @@ const MasonryImages = () => {
                     img.onload = () => {
                         resolve({
                             ...item,
-                            height: img.height / 2,
+                            height: Math.min(img.height, heightViewport * 1.2),
                             width: img.width,
                         })
                     }
                     img.onerror = () => {
                         // Обработка ошибки загрузки изображения
-                        resolve({ ...item, height: 200, width: 200 }) // Значения по умолчанию
+                        resolve({
+                            ...item,
+                            height: orientationArr[
+                                Math.round(
+                                    Math.random() * orientationArr.length,
+                                )
+                            ],
+                            width: orientationArr[
+                                Math.round(
+                                    Math.random() * orientationArr.length,
+                                )
+                            ],
+                        }) // Значения по умолчанию
                     }
                 })
             }),
-        ).then((itemsWithSizes) => {
-            if (isMounted) {
-                setItems(itemsWithSizes)
-                setIsLoading(false)
-            }
-        })
+        )
+            .then((itemsWithSizes) => {
+                if (isMounted) {
+                    setItems(itemsWithSizes)
+                }
+            })
+            .finally(() => {
+                setIsLoadingDOMImages(false)
+            })
         return () => {
             isMounted = false
         }
-    }, [data])
-
-    console.log(items)
+    }, [data, setIsLoadingDOMImages])
 
     const [heights, gridItems] = useMemo(() => {
         const heights = new Array(columns).fill(0) // Each column gets a height starting with zero
-        const gridItems = items.map((child, i) => {
+        const gridItems = items.map((child, _) => {
             const column = heights.indexOf(Math.min(...heights)) // Basic masonry-grid placing, puts tile into the smallest column using Math.min
             const x = (width! / columns) * column // x = container width / number of columns * column index,
-            const y = (heights[column] += child.height / 2) - child.height / 2 // y = it's just the height of the current column
+            const y =
+                (heights[column] += (child.height || 0) / 2) -
+                (child.height || 0) / 2 // y = it's just the height of the current column
             return {
                 ...child,
                 x,
                 y,
                 width: width! / columns,
-                height: child.height / 2,
+                height: (child.height || 0) / 2,
             }
         })
         return [heights, gridItems]
     }, [columns, items, width])
-    // Hook6: Turn the static grid values into animated transitions, any addition, removal or change will be animated
+
     const transitions = useTransition(gridItems, {
-        key: (item: MasonryItem) => item.css,
+        key: (item: MasonryItem) => item.item.id,
         from: ({ x, y, width, height }) => ({
             x,
             y,
@@ -213,39 +180,54 @@ const MasonryImages = () => {
     }, [columns, width])
 
     return (
-        <div
-            ref={ref}
-            className="relative size-full min-h-screen"
-            style={{ height: Math.max(...skeletonHeights) }}
-        >
-            {isLoading
-                ? skeletonItems.map((item) => (
-                      <div
-                          key={item.id}
-                          className="absolute p-2"
-                          style={{
-                              transform: `translate(${item.x}px, ${item.y}px)`,
-                              width: item.width,
-                              height: item.height,
-                          }}
-                      >
-                          <Skeleton className="size-full animate-pulse rounded-3xl" />
-                      </div>
-                  ))
-                : transitions((style, item) => (
-                      <a.div
-                          style={style}
-                          className="absolute p-2 [will-change:transform,width,height,opacity]"
-                      >
-                          <div
-                              className="hover: relative size-full cursor-pointer overflow-hidden rounded-2xl bg-cover bg-center text-[10px] uppercase leading-[10px] shadow-[0px_10px_50px_-10px_rgba(0,0,0,0.2)] transition-all duration-300 hover:scale-[101%] hover:shadow-[0px_20px_50px_-10px_hsl(var(--primary)/0.35)]"
-                              style={{
-                                  backgroundImage: `url(${item.css}?auto=compress&dpr=2&h=1000&w=1000)`,
-                              }}
-                          />
-                      </a.div>
-                  ))}
-        </div>
+        <>
+            <div
+                ref={ref}
+                className="relative size-full min-h-screen"
+                style={{ height: Math.max(...skeletonHeights, ...heights) }}
+            >
+                {error ? (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <p className="text-red-500">{error?.message}</p>
+                    </div>
+                ) : null}
+
+                {transitions((style, item) => (
+                    <a.div
+                        style={style}
+                        className="absolute p-2 [will-change:transform,width,height,opacity]"
+                    >
+                        <div className="relative size-full cursor-pointer overflow-hidden rounded-2xl text-[10px] uppercase leading-[10px] shadow-[0px_10px_50px_-10px_rgba(0,0,0,0.2)] transition-all duration-300 hover:scale-[101%] hover:shadow-[0px_20px_50px_-10px_hsl(var(--primary)/0.35)]">
+                            <NextImage
+                                src={`${item.css}?auto=compress&dpr=1&h=300&w=300`}
+                                alt={item.item.title}
+                                fill
+                                loading="lazy"
+                                sizes="(max-width: 640px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                                className="rounded-2xl object-cover"
+                            />
+                        </div>
+                    </a.div>
+                ))}
+
+                {/* First view skeleton */}
+                {isFetching &&
+                    page === 1 &&
+                    skeletonItems.map((item) => (
+                        <div
+                            key={item.id}
+                            className={`absolute p-2 `}
+                            style={{
+                                transform: `translate(${item.x}px, ${item.y}px)`,
+                                width: item.width,
+                                height: item.height,
+                            }}
+                        >
+                            <Skeleton className="size-full animate-pulse rounded-3xl" />
+                        </div>
+                    ))}
+            </div>
+        </>
     )
 }
 
