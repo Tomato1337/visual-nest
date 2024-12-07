@@ -1,15 +1,15 @@
 "use client"
 
-import { Board } from "@prisma/client"
 import { useIntersectionObserver } from "@uidotdev/usehooks"
 import { Loader2Icon } from "lucide-react"
 import { useEffect, useState } from "react"
 
 import MasonryImages from "@/components/mansory"
+import { BoardWithUser } from "@/types"
 
 const HomePage = () => {
     const [page, setPage] = useState(1)
-    const [boards, setBoards] = useState<Board[]>([])
+    const [boards, setBoards] = useState<BoardWithUser[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingDOMImages, setIsLoadingDOMImages] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -28,7 +28,7 @@ const HomePage = () => {
             try {
                 const res = await fetch(`/api/boards?page=${page}`)
                 const data = await res.json()
-
+                console.log(data)
                 // почему-то происходит дублирование изображений
                 setBoards((prevBoards) => {
                     const combinedBoards = [...prevBoards, ...data.images]

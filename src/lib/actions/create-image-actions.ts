@@ -92,7 +92,9 @@ export const imageCreateAction = async (
             throw error
         }
         return {
-            message: `Ошибка при регистрации: ${(error as Error).message}`,
+            message: `Ошибка при создании изображения: ${
+                (error as Error).message
+            }`,
             typeMessage: "error",
         }
     }

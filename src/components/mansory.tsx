@@ -1,6 +1,6 @@
 "use client"
 
-import { Board } from "@prisma/client"
+import { Board, User } from "@prisma/client"
 import { useTransition, a } from "@react-spring/web"
 import { useMeasure } from "@uidotdev/usehooks"
 import NextImage from "next/image"
@@ -8,7 +8,9 @@ import { FC, useEffect, useMemo, useState } from "react"
 
 import useMedia from "@/hooks/useMedia"
 import { useViewportHeight } from "@/hooks/useViewportHeight"
+import { BoardWithUser } from "@/types"
 
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Skeleton } from "./ui/skeleton"
 
 const orientationArr = [350, 400, 580, 750]
@@ -34,7 +36,7 @@ const skeletonData = [
 }))
 
 export interface MasonryItem {
-    item: Board
+    item: BoardWithUser
     css: string
     height?: number
     width?: number
@@ -56,6 +58,7 @@ const MasonryImages: FC<MasonryImagesProps> = ({
     isFetching,
     error,
     setIsLoadingDOMImages,
+    isLoadingDOMImages,
     page,
 }) => {
     const columns = useMedia(
@@ -193,11 +196,13 @@ const MasonryImages: FC<MasonryImagesProps> = ({
                 ) : null}
 
                 {transitions((style, item) => (
+                    // FIXME: Исправить в будущем. a.div возвращает forwardRef, а forwardRef в React 19 заменён на обычный ref. Разработчики react-spring ещё не выпустили новую адаптированную версию своей библиотеки под react 19
+                    // @ts-expect-error
                     <a.div
                         style={style}
-                        className="absolute p-2 [will-change:transform,width,height,opacity]"
+                        className="group absolute p-2 [will-change:transform,width,height,opacity]"
                     >
-                        <div className="relative size-full cursor-pointer overflow-hidden rounded-2xl text-[10px] uppercase leading-[10px] shadow-[0px_10px_50px_-10px_rgba(0,0,0,0.2)] transition-all duration-300 hover:scale-[101%] hover:shadow-[0px_20px_50px_-10px_hsl(var(--primary)/0.35)]">
+                        <div className="group relative size-full cursor-pointer overflow-hidden rounded-2xl text-[10px] uppercase leading-[10px] shadow-[0px_10px_50px_-10px_rgba(0,0,0,0.2)] transition-all duration-300 hover:scale-[101%] ">
                             <NextImage
                                 src={`${item.css}?auto=compress&dpr=1&h=300&w=300`}
                                 alt={item.item.title}
@@ -206,12 +211,34 @@ const MasonryImages: FC<MasonryImagesProps> = ({
                                 sizes="(max-width: 640px) 100vw, (max-width: 1023px) 50vw, 33vw"
                                 className="rounded-2xl object-cover"
                             />
+                            <div className="absolute size-full bg-gradient-to-t from-[hsl(var(--primary)/0.45)] to-transparent opacity-0 transition-opacity group-hover:opacity-100">
+                                <div className="absolute bottom-0 left-0 flex items-center gap-2 p-3 text-white">
+                                    <Avatar className="size-12">
+                                        <AvatarImage
+                                            src={item.item.user?.image}
+                                            alt={item.item.user?.name}
+                                            className="object-cover"
+                                        />
+                                        <AvatarFallback>
+                                            {item.item.user?.name.charAt(0)}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div className="">
+                                        <h3 className="line-clamp-2 text-lg font-medium">
+                                            {item.item.title}
+                                        </h3>
+                                        <p className="line-clamp-4 text-sm">
+                                            {item.item.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </a.div>
                 ))}
 
                 {/* First view skeleton */}
-                {isFetching &&
+                {(isFetching || isLoadingDOMImages) &&
                     page === 1 &&
                     skeletonItems.map((item) => (
                         <div

@@ -26,7 +26,7 @@ const Navbar = async () => {
         <nav className="flex items-center gap-8">
             <Link
                 href={"/"}
-                className="flex items-center gap-2 transition-all duration-300 hover:scale-105"
+                className="flex items-center gap-2 transition-all duration-300 hover:scale-[103%]"
             >
                 <EyeIcon className="h-full w-12 text-primary" />
                 <h1 className="text-3xl font-bold text-primary">VisualNest</h1>
