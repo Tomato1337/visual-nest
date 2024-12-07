@@ -19,12 +19,14 @@ import { FormImageCreateType } from "@/lib/actions/schemas"
 import { cn } from "@/lib/utils"
 
 import DragAndDrop, { ImageData } from "./ui/drag-and-drop"
+import { User } from "next-auth"
 
 interface ImageUploadPopupProps {
     children: React.ReactNode
+    user: User | undefined
 }
 
-export function CreateBoard({ children }: ImageUploadPopupProps) {
+export function CreateBoard({ children, user }: ImageUploadPopupProps) {
     const router = useRouter()
 
     const [isOpen, setIsOpen] = useState(false)
@@ -83,95 +85,108 @@ export function CreateBoard({ children }: ImageUploadPopupProps) {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="rounded-2xl sm:max-w-[825px]">
-                <DialogHeader>
-                    <DialogTitle>Создание нового изображения</DialogTitle>
-                </DialogHeader>
-                <form
-                    action={formAction}
-                    className="flex flex-col gap-8 sm:flex-row"
-                >
-                    <div className="flex basis-10/12 flex-col gap-2">
-                        <DragAndDrop
-                            imageData={imageData}
-                            setImageData={setImageData}
-                        />
-                        {formState?.errors?.image && (
-                            <p className="text-sm text-red-500">
-                                {formState?.errors.image.join(", ")}
-                            </p>
-                        )}
-                    </div>
-                    <div className="w-full space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="title">Заголовок</Label>
-                            <Input
-                                id="title"
-                                name="title"
-                                value={valuesState?.state?.title}
-                                onChange={(e) =>
-                                    setValuesState((prev) => ({
-                                        ...prev,
-                                        state: {
-                                            ...prev.state,
-                                            title: e.target.value,
-                                        },
-                                    }))
-                                }
-                                placeholder="Введите заголовок изображения"
-                                required
+            <DialogTrigger
+                asChild
+                onClick={() => {
+                    if (!user) {
+                        router.push("/auth/login")
+                    }
+                }}
+            >
+                {children}
+            </DialogTrigger>
+            {user && (
+                <DialogContent className="rounded-2xl sm:max-w-[825px]">
+                    <DialogHeader>
+                        <DialogTitle>Создание нового изображения</DialogTitle>
+                    </DialogHeader>
+                    <form
+                        action={formAction}
+                        className="flex flex-col gap-8 sm:flex-row"
+                    >
+                        <div className="flex basis-10/12 flex-col gap-2">
+                            <DragAndDrop
+                                imageData={imageData}
+                                setImageData={setImageData}
                             />
-                            {formState?.errors?.title && (
+                            {formState?.errors?.image && (
                                 <p className="text-sm text-red-500">
-                                    {formState?.errors.title.join(", ")}
+                                    {formState?.errors.image.join(", ")}
                                 </p>
                             )}
                         </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="description">Описание</Label>
-                            <Textarea
-                                id="description"
-                                name="description"
-                                className="h-full"
-                                value={valuesState?.state?.description}
-                                onChange={(e) =>
-                                    setValuesState((prev) => ({
-                                        ...prev,
-                                        state: {
-                                            ...prev.state,
-                                            description: e.target.value,
-                                        },
-                                    }))
-                                }
-                                placeholder="Введите описание изображения"
-                            />
-                            {formState?.errors?.description && (
-                                <p className="text-sm text-red-500">
-                                    {formState?.errors.description.join(", ")}
+                        <div className="w-full space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="title">Заголовок</Label>
+                                <Input
+                                    id="title"
+                                    name="title"
+                                    value={valuesState?.state?.title}
+                                    onChange={(e) =>
+                                        setValuesState((prev) => ({
+                                            ...prev,
+                                            state: {
+                                                ...prev.state,
+                                                title: e.target.value,
+                                            },
+                                        }))
+                                    }
+                                    placeholder="Введите заголовок изображения"
+                                    required
+                                />
+                                {formState?.errors?.title && (
+                                    <p className="text-sm text-red-500">
+                                        {formState?.errors.title.join(", ")}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="description">Описание</Label>
+                                <Textarea
+                                    id="description"
+                                    name="description"
+                                    className="h-full"
+                                    value={valuesState?.state?.description}
+                                    onChange={(e) =>
+                                        setValuesState((prev) => ({
+                                            ...prev,
+                                            state: {
+                                                ...prev.state,
+                                                description: e.target.value,
+                                            },
+                                        }))
+                                    }
+                                    placeholder="Введите описание изображения"
+                                />
+                                {formState?.errors?.description && (
+                                    <p className="text-sm text-red-500">
+                                        {formState?.errors.description.join(
+                                            ", ",
+                                        )}
+                                    </p>
+                                )}
+                            </div>
+
+                            {visibleInfoMessage && formState?.message && (
+                                <p
+                                    className={cn("text-sm text-primary", {
+                                        "text-red-500":
+                                            formState.typeMessage === "error",
+                                    })}
+                                >
+                                    {formState.message}
                                 </p>
                             )}
-                        </div>
 
-                        {visibleInfoMessage && formState?.message && (
-                            <p
-                                className={cn("text-sm text-primary", {
-                                    "text-red-500":
-                                        formState.typeMessage === "error",
-                                })}
-                            >
-                                {formState.message}
-                            </p>
-                        )}
-
-                        <div className="flex justify-end">
-                            <Button disabled={isPending} type="submit">
-                                {isPending ? "Создание..." : "Создать"}
-                            </Button>
+                            <div className="flex justify-end">
+                                <Button disabled={isPending} type="submit">
+                                    {isPending ? "Создание..." : "Создать"}
+                                </Button>
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </DialogContent>
+                    </form>
+                </DialogContent>
+            )}
         </Dialog>
     )
 }

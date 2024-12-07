@@ -49,20 +49,19 @@ export const UserPopup = ({ user, trigger, handleSignOut }: UserPopupProps) => {
             <PopoverTrigger asChild>{trigger}</PopoverTrigger>
             {isVisible && (
                 <PopoverContent forceMount className="z-50" asChild>
-                    {/* FIXME: Исправить в будущем. a.div возвращает forwardRef, а forwardRef в React 19 заменён на обычный ref. Разработчики react-spring ещё не выпустили новую адаптированную версию своей библиотеки под react 19 */}
-                    {/* @ts-expect-error */}
+                    {/* @ts-expect-error FIXME: Исправить в будущем. a.div возвращает forwardRef, а forwardRef в React 19 заменён на обычный ref. Разработчики react-spring ещё не выпустили новую адаптированную версию своей библиотеки под react 19 */}
                     <a.div
                         style={styles}
                         className="z-50 rounded-3xl bg-primary-foreground p-4 shadow-2xl"
                     >
                         <div className="mb-4 flex items-center space-x-4">
-                            <Avatar className="border">
+                            <Avatar className="border text-secondary text-lg">
                                 <AvatarImage
                                     src={user?.avatarUrl}
                                     alt={user?.name}
                                     className="object-cover"
                                 />
-                                <AvatarFallback>
+                                <AvatarFallback className="bg-primary">
                                     {user?.name?.charAt(0)}
                                 </AvatarFallback>
                             </Avatar>

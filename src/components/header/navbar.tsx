@@ -11,6 +11,7 @@ import { Input } from "../ui/input"
 import { Skeleton } from "../ui/skeleton"
 
 import { UserPopup } from "./user-popup"
+import { redirect } from "next/navigation"
 
 const Navbar = async () => {
     const session = await auth()
@@ -42,7 +43,7 @@ const Navbar = async () => {
                     <Search size={24} strokeWidth={2} />
                 </div>
             </div>
-            <CreateBoard>
+            <CreateBoard user={user}>
                 <Button className="group">
                     <PlusIcon
                         className="size-12 p-0 transition group-hover:scale-125"
@@ -64,13 +65,13 @@ const Navbar = async () => {
                         }}
                         handleSignOut={handleSignOut}
                         trigger={
-                            <Avatar className="size-12 cursor-pointer border">
+                            <Avatar className="size-12 cursor-pointer border text-secondary text-lg">
                                 <AvatarImage
                                     src={user?.image || ""}
                                     alt="@shadcn"
                                     className="object-cover"
                                 />
-                                <AvatarFallback>
+                                <AvatarFallback className="bg-primary">
                                     {user?.name?.toUpperCase().slice(0, 1)}
                                 </AvatarFallback>
                             </Avatar>
@@ -79,8 +80,8 @@ const Navbar = async () => {
                 ) : (
                     <Link href="/auth/login">
                         <Avatar className="size-12 cursor-pointer">
-                            <AvatarFallback>
-                                <UserIcon />
+                            <AvatarFallback className="bg-primary">
+                                <UserIcon className="text-secondary" />
                             </AvatarFallback>
                         </Avatar>
                     </Link>

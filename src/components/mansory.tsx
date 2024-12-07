@@ -196,8 +196,7 @@ const MasonryImages: FC<MasonryImagesProps> = ({
                 ) : null}
 
                 {transitions((style, item) => (
-                    // FIXME: Исправить в будущем. a.div возвращает forwardRef, а forwardRef в React 19 заменён на обычный ref. Разработчики react-spring ещё не выпустили новую адаптированную версию своей библиотеки под react 19
-                    // @ts-expect-error
+                    // @ts-expect-error FIXME: Исправить в будущем. a.div возвращает forwardRef, а forwardRef в React 19 заменён на обычный ref. Разработчики react-spring ещё не выпустили новую адаптированную версию своей библиотеки под react 19
                     <a.div
                         style={style}
                         className="group absolute p-2 [will-change:transform,width,height,opacity]"
@@ -213,13 +212,13 @@ const MasonryImages: FC<MasonryImagesProps> = ({
                             />
                             <div className="absolute size-full bg-gradient-to-t from-[hsl(var(--primary)/0.45)] to-transparent opacity-0 transition-opacity group-hover:opacity-100">
                                 <div className="absolute bottom-0 left-0 flex items-center gap-2 p-3 text-white">
-                                    <Avatar className="size-12">
+                                    <Avatar className="size-12 text-xl">
                                         <AvatarImage
                                             src={item.item.user?.image}
                                             alt={item.item.user?.name}
                                             className="object-cover"
                                         />
-                                        <AvatarFallback>
+                                        <AvatarFallback className="bg-primary">
                                             {item.item.user?.name.charAt(0)}
                                         </AvatarFallback>
                                     </Avatar>
