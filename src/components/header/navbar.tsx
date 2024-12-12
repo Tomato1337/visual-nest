@@ -1,8 +1,8 @@
 import { EyeIcon, PlusIcon, UserIcon } from "lucide-react"
-import { Search } from "lucide-react"
-import Link from "next/link"
 import { Suspense } from "react"
 
+import { Search } from "lucide-react"
+import { redirect } from "next/navigation"
 import { auth, signOut } from "../../../auth"
 import { CreateBoard } from "../create-board"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
@@ -10,8 +10,8 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Skeleton } from "../ui/skeleton"
 
+import Link from "next/link"
 import { UserPopup } from "./user-popup"
-import { redirect } from "next/navigation"
 
 const Navbar = async () => {
     const session = await auth()
@@ -24,13 +24,15 @@ const Navbar = async () => {
     }
 
     return (
-        <nav className="flex items-center gap-8">
+        <nav className=" flex items-center gap-4 sm:gap-8">
             <Link
                 href={"/"}
                 className="flex items-center gap-2 transition-all duration-300 hover:scale-[103%]"
             >
                 <EyeIcon className="h-full w-12 text-primary" />
-                <h1 className="text-3xl font-bold text-primary">VisualNest</h1>
+                <h1 className="hidden sm:block text-3xl font-bold text-primary">
+                    VisualNest
+                </h1>
             </Link>
             <div className="relative w-full">
                 <Input
@@ -44,13 +46,13 @@ const Navbar = async () => {
                 </div>
             </div>
             <CreateBoard user={user}>
-                <Button className="group">
+                <Button className="hidden sm:flex group">
                     <PlusIcon
                         className="size-12 p-0 transition group-hover:scale-125"
                         size={24}
                         strokeWidth={2}
                     />
-                    Новая доска
+                    <p className="hidden md:block">Новое изображение</p>
                 </Button>
             </CreateBoard>
             <Suspense

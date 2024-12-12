@@ -10,6 +10,7 @@ export type State<T> = {
     message?: string | null
     typeMessage?: "error" | "success"
     redirectTo?: string
+    payload?: T
 }
 
 const formAuthSchema = z.object({

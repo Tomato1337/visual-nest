@@ -1,8 +1,8 @@
 "use server"
 
-import bcrypt from "bcrypt"
 import { AuthError } from "next-auth"
 import { UTApi } from "uploadthing/server"
+import bcrypt from "bcrypt"
 
 import { signIn } from "../../../auth"
 import prisma from "../prisma"
@@ -25,16 +25,21 @@ export const registerAction = async (
 
     console.log(validatedFields)
 
-    if (!validatedFields.success) {
+    const image = formData.get("image") as File | null
+
+    if (!validatedFields.success && validatedFields) {
         return {
             errors: validatedFields.error.flatten().fieldErrors,
             message: "Исправьте ошибки в форме.",
             typeMessage: "error",
+            payload: {
+                ...(validatedFields.data as any),
+                image,
+            },
         }
     }
 
     const { email, password, name } = validatedFields.data
-    const image = formData.get("image") as File | null
 
     try {
         const existingUser = await prisma.user.findUnique({
@@ -48,6 +53,10 @@ export const registerAction = async (
                 },
                 message: "Регистрация не удалась.",
                 typeMessage: "error",
+                payload: {
+                    ...(validatedFields.data as any),
+                    image,
+                },
             }
         }
 
@@ -74,12 +83,20 @@ export const registerAction = async (
             message: "Регистрация прошла успешно.",
             typeMessage: "success",
             redirectTo: "/auth/login",
+            payload: {
+                ...(validatedFields.data as any),
+                image,
+            },
         }
     } catch (error) {
         console.error(error)
         return {
             message: `Ошибка при регистрации: ${(error as Error).message}`,
             typeMessage: "error",
+            payload: {
+                ...(validatedFields.data as any),
+                image,
+            },
         }
     }
 }
@@ -87,7 +104,7 @@ export const registerAction = async (
 export const loginAction = async (
     prefState: FormLoginType | undefined,
     formData: FormData,
-): Promise<FormRegisterType | undefined> => {
+): Promise<FormLoginType | undefined> => {
     const validatedFields = formLoginSchema.safeParse(
         Object.fromEntries(formData.entries()),
     )
@@ -97,6 +114,7 @@ export const loginAction = async (
             errors: validatedFields.error.flatten().fieldErrors,
             message: "Исправьте ошибки в форме.",
             typeMessage: "error",
+            payload: validatedFields.data,
         }
     }
 
@@ -109,6 +127,7 @@ export const loginAction = async (
         return {
             message: "Авторизации прошла успешно.",
             typeMessage: "success",
+            payload: validatedFields.data,
             redirectTo: "/",
         }
     } catch (error) {
@@ -118,11 +137,13 @@ export const loginAction = async (
                     console.log(error)
                     return {
                         message: "Неверный логин или пароль.",
+                        payload: validatedFields.data,
                         typeMessage: "error",
                     }
                 default:
                     return {
                         message: "Ошибка авторизации.",
+                        payload: validatedFields.data,
                         typeMessage: "error",
                     }
             }

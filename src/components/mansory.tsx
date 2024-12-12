@@ -121,7 +121,7 @@ const MasonryImages: FC<MasonryImagesProps> = ({
         return () => {
             isMounted = false
         }
-    }, [data, setIsLoadingDOMImages])
+    }, [data])
 
     const [heights, gridItems] = useMemo(() => {
         const heights = new Array(columns).fill(0) // Each column gets a height starting with zero
@@ -142,7 +142,10 @@ const MasonryImages: FC<MasonryImagesProps> = ({
         return [heights, gridItems]
     }, [columns, items, width])
 
-    const transitions = useTransition(gridItems, {
+    const itemsToDisplay =
+        (isFetching || isLoadingDOMImages) && page === 1 ? [] : gridItems
+
+    const transitions = useTransition(itemsToDisplay, {
         key: (item: MasonryItem) => item.item.id,
         from: ({ x, y, width, height }) => ({
             x,
@@ -235,8 +238,6 @@ const MasonryImages: FC<MasonryImagesProps> = ({
                         </div>
                     </a.div>
                 ))}
-
-                {/* First view skeleton */}
                 {(isFetching || isLoadingDOMImages) &&
                     page === 1 &&
                     skeletonItems.map((item) => (

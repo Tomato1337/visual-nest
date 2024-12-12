@@ -28,16 +28,13 @@ const RegisterPage = () => {
         file: null,
         image: null,
     })
-    const [valuesState, setValuesState] = useState<FormRegisterType>({
-        state: {
-            email: "",
-            password: "",
-            name: "",
-            image: undefined,
-        },
+
+    const valuesState: FormRegisterType = {
         errors: {},
         message: null,
-    })
+        typeMessage: undefined,
+    }
+
     const [formState, formAction, isPending] = useActionState(
         registerAction,
         valuesState,
@@ -50,6 +47,12 @@ const RegisterPage = () => {
             const timer = setTimeout(() => {
                 setVisibleInfoMessage(false)
             }, 5000)
+
+            // из-за безопасности очищаем картинку, т.к браузер не даёт установить defaultValue для input[type="file"]
+            setImageState({
+                file: null,
+                image: null,
+            })
 
             return () => clearTimeout(timer)
         }
@@ -78,16 +81,7 @@ const RegisterPage = () => {
                                 id="name"
                                 name="name"
                                 type="text"
-                                value={valuesState?.state?.name}
-                                onChange={(e) =>
-                                    setValuesState({
-                                        ...valuesState,
-                                        state: {
-                                            ...valuesState.state,
-                                            name: e.target.value,
-                                        },
-                                    })
-                                }
+                                defaultValue={formState?.payload?.name}
                                 required
                             />
                             {formState?.errors?.name && (
@@ -102,16 +96,7 @@ const RegisterPage = () => {
                                 id="email"
                                 name="email"
                                 type="email"
-                                value={valuesState?.state?.email}
-                                onChange={(e) =>
-                                    setValuesState({
-                                        ...valuesState,
-                                        state: {
-                                            ...valuesState.state,
-                                            email: e.target.value,
-                                        },
-                                    })
-                                }
+                                defaultValue={formState?.payload?.email}
                                 required
                             />
                             {formState?.errors?.email && (
@@ -138,16 +123,7 @@ const RegisterPage = () => {
                                 id="password"
                                 name="password"
                                 type="password"
-                                value={valuesState?.state?.password}
-                                onChange={(e) =>
-                                    setValuesState({
-                                        ...valuesState,
-                                        state: {
-                                            ...valuesState.state,
-                                            password: e.target.value,
-                                        },
-                                    })
-                                }
+                                defaultValue={formState?.payload?.password}
                                 required
                             />
                             {formState?.errors?.password && (

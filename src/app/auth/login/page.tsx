@@ -23,10 +23,6 @@ const LoginPage = () => {
     const router = useRouter()
 
     const [valuesState, setValuesState] = useState<FormLoginType>({
-        state: {
-            email: "",
-            password: "",
-        },
         errors: {},
         message: null,
         typeMessage: undefined,
@@ -54,6 +50,8 @@ const LoginPage = () => {
         }
     }, [formState])
 
+    console.log(formState?.payload)
+
     return (
         <Card className="w-[350px]">
             <CardHeader>
@@ -63,11 +61,7 @@ const LoginPage = () => {
                     записи.
                 </CardDescription>
             </CardHeader>
-            <form
-                action={async (formData) => {
-                    await formAction(formData)
-                }}
-            >
+            <form action={formAction}>
                 <CardContent>
                     <div className="grid w-full items-center gap-4">
                         <div className="flex flex-col space-y-1.5">
@@ -76,16 +70,7 @@ const LoginPage = () => {
                                 id="email"
                                 name="email"
                                 type="email"
-                                value={valuesState?.state?.email}
-                                onChange={(e) => {
-                                    setValuesState({
-                                        ...valuesState,
-                                        state: {
-                                            ...valuesState.state,
-                                            email: e.target.value,
-                                        },
-                                    })
-                                }}
+                                defaultValue={formState?.payload?.email}
                             />
                             {formState?.errors?.email && (
                                 <p className="text-sm text-red-500">
@@ -99,16 +84,7 @@ const LoginPage = () => {
                                 id="password"
                                 name="password"
                                 type="password"
-                                value={valuesState?.state?.password}
-                                onChange={(e) => {
-                                    setValuesState({
-                                        ...valuesState,
-                                        state: {
-                                            ...valuesState.state,
-                                            password: e.target.value,
-                                        },
-                                    })
-                                }}
+                                defaultValue={formState?.payload?.password}
                             />
                             {formState?.errors?.password && (
                                 <p className="text-sm text-red-500">
