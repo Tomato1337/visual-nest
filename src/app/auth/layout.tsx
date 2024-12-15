@@ -1,5 +1,5 @@
 import { EyeIcon } from "lucide-react"
-import Link from "next/link"
+import { Link } from "next-view-transitions"
 import React, { ReactNode } from "react"
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {

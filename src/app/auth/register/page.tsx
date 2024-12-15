@@ -1,8 +1,7 @@
 "use client"
 
-import { EyeIcon } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { Link } from "next-view-transitions"
+import { useTransitionRouter } from "next-view-transitions"
 import { useActionState, useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -22,7 +21,7 @@ import { FormRegisterType } from "@/lib/actions/schemas"
 import { cn } from "@/lib/utils"
 
 const RegisterPage = () => {
-    const router = useRouter()
+    const router = useTransitionRouter()
 
     const [imageState, setImageState] = useState<ImageData>({
         file: null,

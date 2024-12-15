@@ -10,7 +10,7 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Skeleton } from "../ui/skeleton"
 
-import Link from "next/link"
+import { Link } from "next-view-transitions"
 import { UserPopup } from "./user-popup"
 
 const Navbar = async () => {

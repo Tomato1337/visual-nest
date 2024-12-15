@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import React, { useState, useActionState, useEffect } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -17,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { imageCreateAction } from "@/lib/actions/create-image-actions"
 import { FormImageCreateType } from "@/lib/actions/schemas"
 import { cn } from "@/lib/utils"
+import { useTransitionRouter } from "next-view-transitions"
 
 import DragAndDrop, { ImageData } from "./ui/drag-and-drop"
 import { User } from "next-auth"
@@ -27,7 +27,7 @@ interface ImageUploadPopupProps {
 }
 
 export function CreateBoard({ children, user }: ImageUploadPopupProps) {
-    const router = useRouter()
+    const router = useTransitionRouter()
 
     const [isOpen, setIsOpen] = useState(false)
     const [imageData, setImageData] = useState<ImageData>({

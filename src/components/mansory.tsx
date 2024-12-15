@@ -109,15 +109,12 @@ const MasonryImages: FC<MasonryImagesProps> = ({
                     }
                 })
             }),
-        )
-            .then((itemsWithSizes) => {
-                if (isMounted) {
-                    setItems(itemsWithSizes)
-                }
-            })
-            .finally(() => {
+        ).then((itemsWithSizes) => {
+            if (isMounted) {
+                setItems(itemsWithSizes)
                 setIsLoadingDOMImages(false)
-            })
+            }
+        })
         return () => {
             isMounted = false
         }

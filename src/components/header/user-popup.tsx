@@ -3,16 +3,16 @@
 import { PopoverContent } from "@radix-ui/react-popover"
 import { a, useSpring } from "@react-spring/web"
 import { DoorOpenIcon, PlusIcon, SettingsIcon, UserIcon } from "lucide-react"
-import Link from "next/link"
+import { Link } from "next-view-transitions"
 import { ReactNode, useEffect, useState } from "react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 
+import { CreateBoard } from "../create-board"
 import { Popover, PopoverTrigger } from "../ui/popover"
 
 import DialogExit from "./dialog-exit"
-import { CreateBoard } from "../create-board"
 
 interface UserPopupProps {
     user: {
@@ -56,7 +56,7 @@ export const UserPopup = ({ user, trigger, handleSignOut }: UserPopupProps) => {
                         className="z-50 rounded-3xl bg-primary-foreground p-4 shadow-2xl"
                     >
                         <div className="mb-4 flex items-center space-x-4">
-                            <Avatar className="border text-secondary text-lg">
+                            <Avatar className="border text-lg text-secondary">
                                 <AvatarImage
                                     src={user?.avatarUrl}
                                     alt={user?.name}
@@ -77,7 +77,7 @@ export const UserPopup = ({ user, trigger, handleSignOut }: UserPopupProps) => {
                             <CreateBoard user={user}>
                                 <Button
                                     variant="ghost"
-                                    className="flex sm:hidden w-full justify-start"
+                                    className="flex w-full justify-start sm:hidden"
                                 >
                                     <PlusIcon
                                         className="size-12"

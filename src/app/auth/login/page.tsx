@@ -1,7 +1,7 @@
 "use client"
 
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { Link } from "next-view-transitions"
+import { useTransitionRouter } from "next-view-transitions"
 import { useActionState, useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -20,7 +20,7 @@ import { FormLoginType } from "@/lib/actions/schemas"
 import { cn } from "@/lib/utils"
 
 const LoginPage = () => {
-    const router = useRouter()
+    const router = useTransitionRouter()
 
     const [valuesState, setValuesState] = useState<FormLoginType>({
         errors: {},
