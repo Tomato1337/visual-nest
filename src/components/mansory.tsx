@@ -49,6 +49,7 @@ interface MasonryImagesProps {
     page: number
     isLoadingDOMImages: boolean
     setIsLoadingDOMImages: (value: boolean) => void
+    setError: (value: any) => void
     error: any
     isFetching: boolean
 }
@@ -58,6 +59,7 @@ const MasonryImages: FC<MasonryImagesProps> = ({
     isFetching,
     error,
     setIsLoadingDOMImages,
+    setError,
     isLoadingDOMImages,
     page,
 }) => {
@@ -109,12 +111,18 @@ const MasonryImages: FC<MasonryImagesProps> = ({
                     }
                 })
             }),
-        ).then((itemsWithSizes) => {
-            if (isMounted) {
-                setItems(itemsWithSizes)
-                setIsLoadingDOMImages(false)
-            }
-        })
+        )
+            .then((itemsWithSizes) => {
+                if (isMounted) {
+                    setItems(itemsWithSizes)
+                    setIsLoadingDOMImages(false)
+                }
+            })
+            .catch((err) => {
+                console.error("Ошибка при загрузке изображений:", err)
+                setError("Не удалось загрузить изображения.")
+            })
+
         return () => {
             isMounted = false
         }

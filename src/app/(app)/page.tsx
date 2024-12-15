@@ -1,7 +1,7 @@
 "use client"
 
 import { useIntersectionObserver } from "@uidotdev/usehooks"
-import { Loader2Icon } from "lucide-react"
+import { FrownIcon, Loader2Icon, SmileIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 
 import MasonryImages from "@/components/mansory"
@@ -71,14 +71,23 @@ const HomePage = () => {
 
     return (
         <div className="mt-4 min-h-screen">
-            <MasonryImages
-                page={page}
-                isFetching={isLoading}
-                isLoadingDOMImages={isLoadingDOMImages}
-                setIsLoadingDOMImages={setIsLoadingDOMImages}
-                error={error}
-                data={transformData}
-            />
+            {error && (
+                <div className="h-screen w-full flex justify-center flex-col gap-3 items-center text-destructive font-bold text-xl">
+                    <FrownIcon size={96} />
+                    {error}
+                </div>
+            )}
+            {!error && (
+                <MasonryImages
+                    page={page}
+                    isFetching={isLoading}
+                    isLoadingDOMImages={isLoadingDOMImages}
+                    setIsLoadingDOMImages={setIsLoadingDOMImages}
+                    error={error}
+                    setError={setError}
+                    data={transformData}
+                />
+            )}
             {(isLoading || isLoadingDOMImages) && page > 1 && hasMore && (
                 <div className="mt-4 flex justify-center">
                     <Loader2Icon size={32} className="animate-spin" />
