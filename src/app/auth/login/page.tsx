@@ -50,8 +50,6 @@ const LoginPage = () => {
         }
     }, [formState])
 
-    console.log(formState?.payload)
-
     return (
         <Card className="w-[350px]">
             <CardHeader>

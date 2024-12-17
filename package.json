@@ -23,6 +23,7 @@
         "@react-spring/types": "^9.7.5",
         "@react-spring/web": "^9.7.5",
         "@sentry/nextjs": "^8.42.0",
+        "@tanstack/react-query": "^5.62.8",
         "@types/bcrypt": "^5.0.2",
         "@uidotdev/usehooks": "^2.4.1",
         "@uploadthing/react": "^7.1.2",
@@ -35,13 +36,15 @@
         "next": "15.0.4",
         "next-auth": "^5.0.0-beta.25",
         "next-view-transitions": "^0.3.4",
+        "nuqs": "^2.2.3",
         "react": "19.0.0",
         "react-dom": "19.0.0",
         "react-dropzone": "^14.3.5",
         "tailwind-merge": "^2.5.5",
         "tailwindcss-animate": "^1.0.7",
         "uploadthing": "^7.4.0",
-        "zod": "^3.23.8"
+        "zod": "^3.23.8",
+        "zustand": "^5.0.2"
     },
     "devDependencies": {
         "@types/node": "^22",

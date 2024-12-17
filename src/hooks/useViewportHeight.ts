@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 
 export const useViewportHeight = () => {
-    const [height, setHeight] = useState(0)
+    const [height, setHeight] = useState(Infinity)
 
     useEffect(() => {
         const updateHeight = () => {

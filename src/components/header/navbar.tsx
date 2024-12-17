@@ -1,7 +1,6 @@
 import { EyeIcon, PlusIcon, UserIcon } from "lucide-react"
 import { Suspense } from "react"
 
-import { Search } from "lucide-react"
 import { redirect } from "next/navigation"
 import { auth, signOut } from "../../../auth"
 import { CreateBoard } from "../create-board"
@@ -12,11 +11,11 @@ import { Skeleton } from "../ui/skeleton"
 
 import { Link } from "next-view-transitions"
 import { UserPopup } from "./user-popup"
+import Search from "./search"
 
 const Navbar = async () => {
     const session = await auth()
     const user = session?.user
-    console.log(user)
 
     const handleSignOut = async () => {
         "use server"
@@ -34,17 +33,7 @@ const Navbar = async () => {
                     VisualNest
                 </h1>
             </Link>
-            <div className="relative w-full">
-                <Input
-                    id="input-26"
-                    className="peer pe-9 ps-10"
-                    placeholder="Поиск..."
-                    type="search"
-                />
-                <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
-                    <Search size={24} strokeWidth={2} />
-                </div>
-            </div>
+            <Search />
             <CreateBoard user={user}>
                 <Button className="hidden sm:flex group">
                     <PlusIcon

@@ -18,12 +18,9 @@ export const registerAction = async (
     prefState: FormRegisterType | undefined,
     formData: FormData,
 ): Promise<FormRegisterType | undefined> => {
-    console.log(formData)
     const validatedFields = formRegisterSchema.safeParse(
         Object.fromEntries(formData.entries()),
     )
-
-    console.log(validatedFields)
 
     const image = formData.get("image") as File | null
 

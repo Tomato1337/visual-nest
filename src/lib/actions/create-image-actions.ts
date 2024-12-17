@@ -13,12 +13,9 @@ export const imageCreateAction = async (
     prefState: FormImageCreateType | undefined,
     formData: FormData,
 ): Promise<FormImageCreateType | undefined> => {
-    console.log(formData)
     const validatedFields = formImageCreateSchema.safeParse(
         Object.fromEntries(formData.entries()),
     )
-
-    console.log(validatedFields)
 
     if (!validatedFields.success) {
         return {

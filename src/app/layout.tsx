@@ -2,6 +2,7 @@ import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import type { Metadata } from "next"
 import { ViewTransitions } from "next-view-transitions"
+import { NuqsAdapter } from "nuqs/adapters/next/app"
 import "./globals.css"
 import { Inter } from "next/font/google"
 
@@ -24,7 +25,7 @@ export default function RootLayout({
         <ViewTransitions>
             <html lang="en">
                 <body className={`${interFont.variable} antialiased`}>
-                    {children}
+                    <NuqsAdapter>{children}</NuqsAdapter>
                     <Analytics />
                     <SpeedInsights />
                 </body>
