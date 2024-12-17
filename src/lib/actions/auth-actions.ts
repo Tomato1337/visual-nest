@@ -63,6 +63,9 @@ export const registerAction = async (
             try {
                 const imageResponse = await new UTApi().uploadFiles(image)
                 imageUrl = imageResponse.data?.url || ""
+                if (!imageUrl) {
+                    console.error("Error uploading image:", imageResponse)
+                }
             } catch (error) {
                 console.error("Error uploading image:", error)
             }

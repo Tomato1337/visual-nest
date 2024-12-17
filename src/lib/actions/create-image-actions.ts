@@ -50,6 +50,7 @@ export const imageCreateAction = async (
         const imageResponse = await new UTApi().uploadFiles(image)
 
         if (!imageResponse.data?.url) {
+            console.error("Ошибка при загрузке изображения", imageResponse)
             return {
                 message: "Ошибка при загрузке изображения",
                 typeMessage: "error",
