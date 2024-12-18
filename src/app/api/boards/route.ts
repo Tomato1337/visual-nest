@@ -7,7 +7,7 @@ export async function GET(request: Request) {
 
     const page = parseInt(searchParams.get("page") || "1", 10)
     const limit = parseInt(searchParams.get("limit") || "15", 10)
-    const search = searchParams.get("search")?.trim().toLowerCase() || ""
+    const search = searchParams.get("search") || ""
 
     console.log("--------------", searchParams)
 
@@ -17,8 +17,8 @@ export async function GET(request: Request) {
         orderBy: { createdAt: "desc" },
         where: {
             OR: [
-                { title: { contains: search } },
-                { user: { name: { contains: search } } },
+                { title: { contains: search, mode: "insensitive" } },
+                { user: { name: { contains: search, mode: "insensitive" } } },
             ],
         },
         include: { user: true },

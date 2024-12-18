@@ -87,6 +87,7 @@ const HomePage = () => {
         setIsLoading(true)
         setIsLoadingDOMImages(true)
         setBoards([])
+        setFirstRender(true)
     }, [search.value])
 
     useEffect(() => {
